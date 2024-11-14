@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import android.app.Activity
 import android.content.Intent
@@ -24,32 +23,50 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            WhiteNoiseApp()
+            HushApp()
         }
     }
 }
 
 
 @Composable
-fun WhiteNoiseApp() {
+fun HushApp() {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("White Noise") })
+            TopAppBar(title = { Text("Hush") })
         }
     ) { innerPadding ->
-        WhiteNoisePlayer(modifier = Modifier.padding(innerPadding))
+        HushPlayer(modifier = Modifier.padding(innerPadding))
     }
 }
 
 @Composable
-fun WhiteNoisePlayer(modifier: Modifier = Modifier) {
+fun HushPlayer(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     var isPlaying by remember { mutableStateOf(false) }
     var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
     // val mediaPlayer = remember { MediaPlayer.create(context, R.raw.whitenoise) }
     var sliderPosition by remember { mutableStateOf(1f) }
     var isLooping by remember { mutableStateOf(true) }
-    var selectedAudioUri by remember { mutableStateOf<Uri?>(null) } // Store URI
+    // var selectedAudioUri by remember { mutableStateOf<Uri?>(null) } // Store URI
+
+    // Get the URI of whitenoise.mp3 from raw resources
+    val defaultAudioUri = Uri.parse("android.resource://${context.packageName}/${R.raw.whitenoise}")
+
+    // Initialize selectedAudioUri with the default URI
+    var selectedAudioUri by remember { mutableStateOf<Uri?>(defaultAudioUri) }
+
+    LaunchedEffect(selectedAudioUri) {
+        if (selectedAudioUri != null) {
+            mediaPlayer?.release()
+
+            mediaPlayer = MediaPlayer.create(context, selectedAudioUri).apply {
+                isLooping = isLooping
+                setVolume(sliderPosition, sliderPosition)
+                // You can optionally call prepareAsync() here if needed
+            }
+        }
+    }
 
 
     // Set looping based on the state
