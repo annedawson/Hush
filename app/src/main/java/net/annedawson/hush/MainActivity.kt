@@ -145,12 +145,14 @@ fun HushPlayer(modifier: Modifier = Modifier) {
         }
 
         Button(onClick = {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                type = "audio/*"
-                addCategory(Intent.CATEGORY_OPENABLE)
+            if (!isPlaying) { // Check if a file is not already playing
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    type = "audio/*"
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                }
+                launcher.launch(intent)
             }
-            launcher.launch(intent) // Launch the intent using the launcher
-        }) {
+        }, modifier = Modifier.padding(16.dp)) {
             Text("Select Audio")
         }
 
