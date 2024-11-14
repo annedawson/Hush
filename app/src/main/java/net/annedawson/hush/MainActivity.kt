@@ -18,6 +18,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import android.app.Activity
 import android.content.Intent
+import android.widget.Toast
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,6 +152,8 @@ fun HushPlayer(modifier: Modifier = Modifier) {
                     addCategory(Intent.CATEGORY_OPENABLE)
                 }
                 launcher.launch(intent)
+            } else {
+                     Toast.makeText(context, "An audio file is already playing.", Toast.LENGTH_SHORT).show()
             }
         }, modifier = Modifier.padding(16.dp)) {
             Text("Select Audio")
